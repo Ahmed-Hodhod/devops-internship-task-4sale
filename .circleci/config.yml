@@ -46,11 +46,11 @@ jobs:
 
   build-and-push-image:
     docker:
-      - image: circleci/node
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.7
+          version: 18.09.7
       - run:
           name: Build and push Docker image
           command: |
