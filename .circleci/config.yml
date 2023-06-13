@@ -46,7 +46,8 @@ jobs:
 
   build-and-push-image:
     docker:
-      - image: circleci/node:20.3.0
+      - image: circleci/node:14.21.3
+
     steps:
       - checkout
       - setup_remote_docker:
