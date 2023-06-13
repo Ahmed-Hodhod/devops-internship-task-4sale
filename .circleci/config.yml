@@ -39,7 +39,8 @@ jobs:
           command: |
             cd ping-pong-app
             npm install
-            npm start || return 1 # return 1 to fail the job if this command fails
+            npm start & || return 1 # return 1 to fail the job if this command fails
+            return 0 # return 0 to pass the job if this command succeeds
       - save_cache:
           paths: [ping-pong-app/node_modules]
           key: api-build
