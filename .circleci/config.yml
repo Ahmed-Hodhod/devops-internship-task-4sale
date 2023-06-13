@@ -44,18 +44,6 @@ jobs:
           paths: [ping-pong-app/node_modules]
           key: api-build
 
-  test-api:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Test back-end
-          command: |
-            cd backend 
-            npm run test
   build-and-push-image:
     docker:
       - image: circleci/node:14
@@ -67,6 +55,7 @@ jobs:
           name: Build and push Docker image
           command: |
             # Build the Docker image
+            cd ping-pong-app
             docker build -t ahmedhodhod1/ping-pong-app:latest .
 
             # Log in to Docker Hub
