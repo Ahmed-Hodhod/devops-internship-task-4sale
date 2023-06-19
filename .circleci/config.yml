@@ -116,6 +116,7 @@ jobs:
       - image: cimg/python:3.10
   
     steps:
+      - checkout
       - kubernetes/install:
           kubectl-version: v1.22.0
       - aws-eks/update-kubeconfig-with-authenticator:
@@ -126,7 +127,7 @@ jobs:
             ls 
             echo "separator"
             ls ..
-            #kubectl apply -f project/eks/app-deployment.yml
+            kubectl apply -f eks/app-deployment.yml
             kubectl get services
             kubectl get deployments 
             kubectl describe deployment 4sale 
