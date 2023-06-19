@@ -131,9 +131,10 @@ jobs:
           resource-name: 4salet
       - run:
           command: |
-
-            kubectl describe deployment 4sale 
-            kubectl describe service 4sale
+          
+            kubectl get services
+            kubectl get deployments 
+           
           name: Test cluster
 
   configure-infrastructure:
