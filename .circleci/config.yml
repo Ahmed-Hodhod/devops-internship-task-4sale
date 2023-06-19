@@ -121,15 +121,17 @@ jobs:
           kubectl-version: v1.22.0
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: cluster-4sale
-
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: eks/app-deployment.yml
+          resource-name: 4sale
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: eks/app-service.yml
+          resource-name: 4salet
       - run:
           command: |
-            ls 
-            echo "separator"
-            ls ..
-            kubectl apply -f eks/app-deployment.yml
-            kubectl get services
-            kubectl get deployments 
+
             kubectl describe deployment 4sale 
             kubectl describe service 4sale
           name: Test cluster
