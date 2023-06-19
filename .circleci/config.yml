@@ -57,13 +57,13 @@ jobs:
             # Build the Docker image
             cd ping-pong-app
 
-            docker build -t ahmedhodhod1/ping-pong-app:latest .
+            docker build -t $DOCKER_USERNAME/ping-pong-app:latest .
 
             # Log in to Docker Hub
             docker login --email ahmed.abdelsalam.sa@gmail.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
             # Push the Docker image to Docker Hub
-            docker push ahmedhodhod1/ping-pong-app:latest
+            docker push $DOCKER_USERNAME/ping-pong-app:latest
 
   deploy-infrastructure:
     docker:
