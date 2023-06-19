@@ -125,7 +125,7 @@ jobs:
           command: |
             ls 
             echo "separator"
-            ls ~
+            ls project
             #kubectl apply -f eks/app-deployment.yml
             kubectl get services
             kubectl get deployments 
