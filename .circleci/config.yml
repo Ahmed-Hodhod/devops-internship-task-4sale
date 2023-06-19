@@ -49,9 +49,9 @@ jobs:
       - image: circleci/node:16.3.0
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.7
-          docker_layer_caching: true
+
+      - setup_remote_docker
+
 
       - run:
           name: Build and push Docker image
@@ -59,13 +59,15 @@ jobs:
             # Build the Docker image
             cd ping-pong-app
 
-            docker build -t ahmedhodhod1/ping-pong-app:latest .
+            docker build -t $DOCKERHUB_USERNAME/ping-pong-app .
 
             # Log in to Docker Hub
-            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin 
+
+            docker login -u $DOCKERHUB_USERNAME	 -p $DOCKERHUB_PASSWORD
+            echo logged
 
             # Push the Docker image to Docker Hub
-            docker push ahmedhodhod1/ping-pong-app:latest
+            docker push $DOCKERHUB_USERNAME/ping-pong-app
 
   deploy-infrastructure:
     docker:
