@@ -60,7 +60,7 @@ jobs:
                   "auth": "'"$DOCKER_AUTH"'"
                 }
               }
-            }' > $HOME/.docker/config.json
+            }' > $HOME/config.json
 
       - run:
           name: Build and push Docker image
