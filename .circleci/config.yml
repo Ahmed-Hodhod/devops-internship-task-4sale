@@ -61,7 +61,7 @@ jobs:
 
             # Log in to Docker Hub
             docker login --email ahmed.abdelsalam.sa@gmail.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-
+            echo logged
             # Push the Docker image to Docker Hub
             docker push $DOCKER_USERNAME/ping-pong-app:latest
 
