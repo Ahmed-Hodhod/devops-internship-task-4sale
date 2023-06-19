@@ -103,6 +103,7 @@ jobs:
       - kubernetes/install-kubectl
       - run: 
           command: | 
+            aws eks --region us-east-1 update-kubeconfig --name cluster-4sale
             kubectl run nginx --image nginx 
 
   configure-infrastructure:
