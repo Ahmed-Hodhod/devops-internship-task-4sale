@@ -71,7 +71,7 @@ jobs:
             docker build -t ahmedhodhod1/ping-pong-app:latest .
 
             # Log in to Docker Hub
-            #echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin 
+            docker login --username $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
             # Push the Docker image to Docker Hub
             docker push ahmedhodhod1/ping-pong-app:latest
