@@ -120,6 +120,10 @@ jobs:
           kubectl-version: v1.22.0
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: cluster-4sale
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: eks/app-deployment.yaml
+          resource-name: deployment/nginx-deployment
       - run:
           command: |
             kubectl get services
