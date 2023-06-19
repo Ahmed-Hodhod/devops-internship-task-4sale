@@ -84,15 +84,15 @@ jobs:
           no_output_timeout: 50m
           command: |
             sg=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SecurityGroups'].OutputValue"  --output text`
-            subnets = `aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SubnetIds'].OutputValue"  --output text`
-            vpc = `aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='VpcId'].OutputValue"  --output text`
+            subnets=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SubnetIds'].OutputValue"  --output text`
+            vpc=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='VpcId'].OutputValue"  --output text`
 
             aws cloudformation deploy --template-file .circleci/amazon-eks-nodegroup.yaml \
              --stack-name eks-ng --parameter-overrides  ClusterName=cluster-4sale \ 
               ClusterControlPlaneSecurityGroup=$sg KeyName=eks NodeGroupName=eks-ng \
               Subnets=$subnets VpcId=$vpc  \
               --capabilities CAPABILITY_NAMED_IAM
-              
+
 
       - persist_to_workspace:
           root: ~/
