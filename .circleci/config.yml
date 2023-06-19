@@ -1,6 +1,8 @@
 version: 2.1
 orbs:
-  kubernetes: circleci/kubernetes@1.3.1
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks  and remove files from s3
@@ -92,19 +94,25 @@ jobs:
             aws cloudformation deploy --template-file .circleci/amazon-eks-nodegroup.yaml \
              --stack-name eks-ng --capabilities CAPABILITY_NAMED_IAM --parameter-overrides  ClusterName=cluster-4sale ClusterControlPlaneSecurityGroup="${sg}" KeyName=eks NodeGroupName=eks-ng Subnets="${subnets}" VpcId="${vpc}"
 
-    
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - hosts.txt
       #- destroy-environment
 
-  update-kubernetes-deployment:
+  create-deployment:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
+
     steps:
       - checkout
-      - kubernetes/install-kubectl
-      - run: 
-          command: | 
-            aws eks --region us-east-1 update-kubeconfig --name cluster-4sale
-            kubectl run nginx --image nginx 
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: cluster-4sale
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: eks/app-deployment.yml
+          resource-name: deployment/nginx-deployment
 
   configure-infrastructure:
     docker:
