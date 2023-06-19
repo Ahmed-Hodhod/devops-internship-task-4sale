@@ -87,6 +87,8 @@ jobs:
             subnets=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SubnetIds'].OutputValue"  --output text`
             vpc=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='VpcId'].OutputValue"  --output text`
             echo $subnets
+            echo $sg 
+            echo $vpc
 
             aws cloudformation deploy --template-file .circleci/amazon-eks-nodegroup.yaml \
              --stack-name eks-ng --capabilities CAPABILITY_NAMED_IAM --parameter-overrides  ClusterName=cluster-4sale \ 
