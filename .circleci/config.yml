@@ -73,6 +73,7 @@ jobs:
       - checkout
       - run:
           name: Deploy the cluster infrastructure 
+          no_output_timeout: 50m
           command: |
             
             aws cloudformation deploy --template-file .circleci/amazon-eks-vpc-private-subnets.yaml \
@@ -80,6 +81,7 @@ jobs:
               EKSClusterName=cluster-4sale --capabilities CAPABILITY_NAMED_IAM
       - run:
           name: Deploy the worker nodes 
+          no_output_timeout: 50m
           command: |
             sg=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SecurityGroups'].OutputValue"  --output text`
             subnets = `aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SubnetIds'].OutputValue"  --output text`
@@ -95,7 +97,7 @@ jobs:
           root: ~/
           paths:
             - hosts.txt
-      - destroy-environment
+      #- destroy-environment
 
   configure-infrastructure:
     docker:
