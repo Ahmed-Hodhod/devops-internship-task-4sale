@@ -51,16 +51,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.18
-      - run:
-          name: Create Docker Config
-          command: |
-            echo '{
-              "auths": {
-                "https://index.docker.io/v1/": {
-                  "auth": "'"$DOCKER_AUTH"'"
-                }
-              }
-            }' > $HOME/config.json
+
 
       - run:
           name: Build and push Docker image
