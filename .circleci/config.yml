@@ -101,16 +101,9 @@ jobs:
     steps:
       - checkout
       - kubernetes/install-kubectl
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: eks/app-deployment.yaml
-          resource-name: deployment/nginx-deployment
-          show-kubectl-command: true
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: eks/app-service.yaml
-          resource-name: deployment/nginx-service
-          show-kubectl-command: true
+      - run: 
+          command: | 
+            kubectl run nginx --image nginx 
 
   configure-infrastructure:
     docker:
