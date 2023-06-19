@@ -92,6 +92,7 @@ jobs:
               ClusterControlPlaneSecurityGroup=$sg KeyName=eks NodeGroupName=eks-ng \
               Subnets=$subnets VpcId=$vpc  \
               --capabilities CAPABILITY_NAMED_IAM
+              
 
       - persist_to_workspace:
           root: ~/
