@@ -123,10 +123,17 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: eks/app-deployment.yaml
-          resource-name: deployment/nginx-deployment
+          resource-name: 4sale
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: eks/app-service.yaml
+          resource-name: 4sale
       - run:
           command: |
             kubectl get services
+            kubectl get deployments 
+            kubectl describe deployment 4sale 
+            kubectl describe service 4sale
           name: Test cluster
 
   configure-infrastructure:
