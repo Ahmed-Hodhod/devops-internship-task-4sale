@@ -98,8 +98,7 @@ jobs:
       #- destroy-environment
 
   create-deployment:
-    docker:
-      - image: cimg/python:3.10
+    executer: aws-eks/python3
 
     steps:
       - checkout
