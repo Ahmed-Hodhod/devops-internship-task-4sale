@@ -123,6 +123,9 @@ jobs:
 
       - run:
           command: |
+            ls 
+            echo ~
+            ls ~
             kubectl apply -f eks/app-deployment.yml
             kubectl get services
             kubectl get deployments 
