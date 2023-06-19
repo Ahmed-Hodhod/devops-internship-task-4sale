@@ -93,7 +93,7 @@ jobs:
             aws cloudformation deploy --template-file .circleci/amazon-eks-nodegroup.yaml \
              --stack-name eks-ng --capabilities CAPABILITY_NAMED_IAM --parameter-overrides  ClusterName=cluster-4sale \ 
               ClusterControlPlaneSecurityGroup="${sg}" KeyName=eks NodeGroupName=eks-ng \
-              Subnets="${subnets}" VpcId="${vpc}"  \
+              Subnets="${subnets}" VpcId="${vpc}"  
               
 
 
