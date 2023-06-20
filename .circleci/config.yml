@@ -370,8 +370,8 @@ jobs:
 workflows:
   default:
     jobs:
-      #- build-api
-      #- build-and-push-image:
+      - build-api
+      - build-and-push-image:
       #     requires: [build-api]
       # - test-api:
       #     requires: [build-api]
@@ -388,7 +388,7 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      - deploy-infrastructure
+      #- deploy-infrastructure
         # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #-   create-deployment
       - deploy-eks-objects:
