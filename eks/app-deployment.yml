@@ -16,4 +16,4 @@ spec:
         - name: app-container
           image: ahmedhodhod1/ping-pong-app:latest
           ports:
-            - containerPort: 5001
+            - containerPort: 80
