@@ -110,8 +110,8 @@ workflows:
     jobs:
       - build-api
       - build-and-push-image:
-           requires: [build-api]
+          requires: [build-api]
       #- deploy-infrastructure:
       #      requires: [build-and-push-image]
       - deploy-eks-objects:
-     
+            requires: [build-and-push-image]
