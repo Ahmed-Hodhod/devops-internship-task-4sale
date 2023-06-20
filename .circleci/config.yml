@@ -96,7 +96,6 @@ jobs:
             aws cloudformation deploy --template-file .circleci/amazon-eks-nodegroup.yaml \
              --stack-name eks-ng --capabilities CAPABILITY_NAMED_IAM --parameter-overrides  ClusterName=cluster-4sale ClusterControlPlaneSecurityGroup="${sg}" KeyName=eks NodeGroupName=eks-ng Subnets="${subnets}" VpcId="${vpc}"
 
-  
       #- destroy-environment
 
   create-deployment:
@@ -111,24 +110,27 @@ jobs:
           resource-file-path: eks/app-deployment.yml
           resource-name: deployment/nginx-deployment
 
-  test-cluster:
+  deploy-eks-objects:
     docker:
       - image: cimg/python:3.10
-  
+
     steps:
       - checkout
       - kubernetes/install:
           kubectl-version: v1.22.0
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: cluster-4sale
-    
+
       - run:
           command: |
             kubectl apply -f eks/app-deployment.yml
+            kubectl apply -f eks/app-service.yml
             kubectl get services
             kubectl get deployments 
             kubectl describe deployment app-deployment
-          name: Test cluster
+            kubectl describe service app-service
+
+          name: Deploy objects to EKS
 
   configure-infrastructure:
     docker:
