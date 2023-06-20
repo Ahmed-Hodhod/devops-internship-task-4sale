@@ -372,7 +372,7 @@ workflows:
     jobs:
       - build-api
       - build-and-push-image:
-      #     requires: [build-api]
+           requires: [build-api]
       # - test-api:
       #     requires: [build-api]
       # - scan-api:
