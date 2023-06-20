@@ -129,6 +129,9 @@ jobs:
             kubectl get deployments 
             kubectl describe deployment app-deployment
             kubectl describe service app-service
+            kubectl get pods 
+            kubectl get nodes 
+            
 
           name: Deploy objects to EKS
 
