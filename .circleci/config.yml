@@ -1,4 +1,10 @@
 version: 2.1
+orbs:
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3
+
+  aws-ecs: circleci/aws-ecs@3.2.0
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks  and remove files from s3
@@ -72,43 +78,48 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Ensure back-end infrastructure exists
+          name: Deploy the cluster infrastructure
+          no_output_timeout: 50m
           command: |
-            yum -y install gzip tar 
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --stack-name "updapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: Ensure front-end infrastructure exist
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              --stack-name "updapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: Add back-end ip to ansible hosts
-          command: |
-            #cd .circleci/ansible
-            rm -rf ~/hosts.txt > /dev/null
-            #echo "[all]" > ~/hosts.txt
-            #aws ec2 describe-instances \
-            #--query='Reservations[*].Instances[*].PublicIpAddress' \
-            #--output text 
-            #Get the most recent launched instance 
-            aws ec2 describe-instances \
-            --query 'sort_by(Reservations[].Instances[], &LaunchTime)[-1].[PublicIpAddress]' \
-            --output text >> ~/ips.txt
 
-            echo "[all]" > ~/hosts.txt
-            while read p; do   echo "$p" >> ~/hosts.txt; done < ~/ips.txt
-            cat ~/hosts.txt
+            aws cloudformation deploy --template-file .circleci/amazon-eks-vpc-private-subnets.yaml \
+              --stack-name eks-4sale --parameter-overrides EKSIAMRoleName=eks_role \
+              EKSClusterName=cluster-4sale --capabilities CAPABILITY_NAMED_IAM
+      - run:
+          name: Deploy the worker nodes
+          no_output_timeout: 50m
+          command: |
+            sg=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SecurityGroups'].OutputValue"  --output text`
+            subnets=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='SubnetIds'].OutputValue"  --output text`
+            vpc=`aws cloudformation describe-stacks --region us-east-1  --query "Stacks[?StackName=='eks-4sale'][].Outputs[?OutputKey=='VpcId'].OutputValue"  --output text`
 
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - hosts.txt
-      - destroy-environment
+            aws cloudformation deploy --template-file .circleci/amazon-eks-nodegroup.yaml \
+             --stack-name eks-ng --capabilities CAPABILITY_NAMED_IAM --parameter-overrides  ClusterName=cluster-4sale ClusterControlPlaneSecurityGroup="${sg}" KeyName=eks NodeGroupName=eks-ng Subnets="${subnets}" VpcId="${vpc}"
+
+      #- destroy-environment
+
+  deploy-eks-objects:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - kubernetes/install:
+          kubectl-version: v1.22.0
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: cluster-4sale
+
+      - run:
+          command: |
+            kubectl apply -f eks/app-deployment.yml
+            kubectl apply -f eks/app-service.yml
+            kubectl get services
+            kubectl get deployments 
+            kubectl describe deployment app-deployment
+            kubectl describe service app-service
+            kubectl get pods 
+            kubectl get nodes
+
+          name: Deploy objects to EKS
 
   configure-infrastructure:
     docker:
@@ -359,9 +370,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-api
-      - build-and-push-image:
-          requires: [build-api]
+      #- build-api
+      #- build-and-push-image:
+      #     requires: [build-api]
       # - test-api:
       #     requires: [build-api]
       # - scan-api:
@@ -377,8 +388,11 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - deploy-infrastructure
+        # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #-   create-deployment
+      - deploy-eks-objects:
+          requires: [deploy-infrastructure]
       #     filters:
       #       branches:
       #         only: [master]
